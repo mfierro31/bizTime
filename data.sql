@@ -1,6 +1,8 @@
 \c biztime
 
 DROP TABLE IF EXISTS invoices;
+DROP TABLE IF EXISTS companies_industries;
+DROP TABLE IF EXISTS industries;
 DROP TABLE IF EXISTS companies;
 
 CREATE TABLE companies (
@@ -19,12 +21,42 @@ CREATE TABLE invoices (
     CONSTRAINT invoices_amt_check CHECK ((amt > (0)::double precision))
 );
 
+CREATE TABLE industries (
+  code text PRIMARY KEY,
+  industry text NOT NULL
+);
+
+CREATE TABLE companies_industries (
+  comp_code text NOT NULL REFERENCES companies,
+  ind_code text NOT NULL REFERENCES industries,
+  PRIMARY KEY (comp_code, ind_code)
+);
+
 INSERT INTO companies
   VALUES ('apple', 'Apple Computer', 'Maker of OSX.'),
-         ('ibm', 'IBM', 'Big blue.');
+         ('ibm', 'IBM', 'Big blue.'),
+         ('google', 'Google', 'Maker of Google Search Engine and Google Chrome.');
 
-INSERT INTO invoices (comp_Code, amt, paid, paid_date)
+INSERT INTO invoices (comp_code, amt, paid, paid_date)
   VALUES ('apple', 100, false, null),
          ('apple', 200, false, null),
          ('apple', 300, true, '2018-01-01'),
-         ('ibm', 400, false, null);
+         ('ibm', 400, false, null),
+         ('google', 500, false, null);
+
+INSERT INTO industries
+  VALUES ('tech', 'Tech'),
+         ('comp', 'Computer'),
+         ('search', 'Search Engine'),
+         ('data', 'Data');
+
+INSERT INTO companies_industries
+  VALUES ('apple', 'tech'),
+         ('ibm', 'tech'),
+         ('google', 'tech'),
+         ('apple', 'comp'),
+         ('ibm', 'comp'),
+         ('google', 'search'),
+         ('apple', 'data'),
+         ('ibm', 'data'),
+         ('google', 'data');
